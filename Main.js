@@ -105,22 +105,23 @@ function get_map_data(data, map_json){
 function create_state_point_mapping(){
 	d3.selectAll(".state").each(function(d){
 		var dat = d.properties.data;
-		if(!dat == undefined){
-			var state = this;
+		if(!(dat == undefined)){
 			var points = d3.selectAll(".point")
 			.filter(function(e){ return !(dat == undefined) && e.abbr == dat.abbr;});
-			points.each(function(f){
-				f["mapping"] = state;
-			});
+			
+			points.data()[0]["mapping"] = d3.select(this);
 		}
 	});
 	d3.selectAll(".point").each(function(d){
-		var point = this;
-		var states = d3.selectAll(".state")
-		.filter(function(e){ !(e.properties.data == undefined) && e.properties.data.abbr == d.abbr;});
-		states.each(function(f){
-			f.properties.data["mapping"] = point;
+		
+		var states = d3.selectAll(".state").filter(function(e){ 
+			if(e.properties.data == undefined) return false;
+			return (e.properties.data.abbr == d.abbr); 
 		});
+		
+		if(!(states.empty())){
+			states.data()[0]["mapping"] = d3.select(this);
+		}
 	});
 }
 
@@ -134,14 +135,14 @@ function init_states_vis(data, initVal){
 	d3.selectAll(".state")
 	.on("mouseover", function(d){
 		var dat = d.properties.data;
-		d3.select(dat.mapping).classed("point-hover", true);
+		d.mapping.classed("point-hover", true);
 		update_state_name(dat.state);
 		update_favorite_cereal(dat.cereal);
 		draw_income_vis(dat.income);
 		
 	}).on("mouseout", function(d){
 		var dat = d.properties.data;
-		d3.select(dat.mapping).classed("point-hover", false);
+		d.mapping.classed("point-hover", false);
 		clear_state_name();
 	});
 }
@@ -167,11 +168,11 @@ function init_comparison_scatter(data, initX, initY){
 
 		d3.selectAll(".point")
 		.on("mouseover", function(d){
-			d3.select(d.mapping).classed("state-hover", true);
+			d.mapping.classed("state-hover", true);
 			update_state_name(d.state);
 		})
 		.on("mouseout", function(d){
-			d3.select(d.mapping).classed("state-hover", false);
+			d.mapping.classed("state-hover", false);
 			clear_state_name();
 		});
 }
