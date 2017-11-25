@@ -1,0 +1,81 @@
+text {
+	fill : white;
+	cursor: default;
+	-webkit-user-select: none;  
+	-moz-user-select: none;    
+	-ms-user-select: none;      
+	user-select : none;
+}
+
+body{
+	background: black;
+}
+.point:hover, .point-hover{
+	stroke-width: 10;
+}
+.point{
+	opacity: 0.8;
+}
+.state:hover, .state-hover{
+	fill-opacity: 0;
+}
+
+.obesity{
+	fill : #0093D1;
+	stroke: #0093D1;
+}
+
+.poverty{
+	fill: #F2635F;
+	stroke: #F2635F;
+}
+
+.cereal{
+	fill:  #cc00ff;
+	stroke: #cc00ff;
+}
+
+
+.stack{
+	opacity: 0.8;
+	stroke-width : 3;
+	stroke: black;	
+}
+
+
+.axis text{
+	font-size : 15px;
+}
+
+.axis line{
+	stroke: white;
+}
+
+.axis path{
+	stroke: white;
+}
+.lt, .rt, .content{
+	font-size: 20px;
+}
+.lt, .rt{
+	cursor: pointer;
+}
+.lt:hover, .rt:hover{
+	fill: black;
+	stroke: white;
+}
+
+.title{
+	font-size: 30px;
+}
+
+.bar .scale{
+	fill: none;
+	stroke: white;
+}
+
+.bar .value{
+	fill: #0093D1;
+	opacity: 0.8;
+}
+	

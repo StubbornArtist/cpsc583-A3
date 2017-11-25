@@ -1,0 +1,39 @@
+<!DOCTYPE html> 
+<meta charset="utf-8"/>
+<meta content="utf-8 http-equiv="encoding"">
+
+<html>
+	<head>
+		<link rel="stylesheet" href="style.css"></link>
+		<script src="d3.js"></script>
+		<script src="d3-queue.js"></script>
+		<script src="us.js"></script>
+		<script src="USMap.js"></script>
+		<script src="BulletChart.js" ></script>
+		<script src="AxisSelector.js" ></script>
+		<script src="ScatterPlot.js"></script>
+		<script src="StackedAreaChart.js"></script>
+		<script src="Main.js" ></script>
+	</head>
+	<body>
+		<svg width = "2000" height="1100">
+			<g transform = "translate(0, 50)">
+				<text id = "state-name" class = "title" transform = "translate(50, 0)"/>
+				<g transform = "translate(0, 50)">
+					<g id = "states-vis"/>
+				</g>
+				<g  id = "compare-vis-container" transform = "translate(950, 50)">
+					<g id = "compare-vis"/>
+				</g>
+				<g transform = "translate(50, 670)">
+					<text id = "favorite-cereal-title" class = "title"/>
+					<g id = "favorite-cereal-vis" transform = "translate(0, 50)"/>
+				</g>
+				<g transform = "translate(950, 670)">
+					<text id = "income-title" class = "title">Obesity By Income 2011 - 2015</text>
+					<g id = "income-vis"/>
+				</g>
+			</g>
+		</svg>
+	</body>
+</html>
