@@ -18,9 +18,22 @@
 	<body>
 		<svg width = "2000" height="1100">
 			<g transform = "translate(0, 50)">
+				<defs>
+					<linearGradient id="legend-gradient">
+						<stop offset="0%" stop-color="#0093D1" stop-opacity="0"/>
+						<stop offset="100%"  stop-color="#0093D1" stop-opacity="1"/>
+					</linearGradient>
+				</defs>
 				<text id = "state-name" class = "title" transform = "translate(50, 0)"/>
 				<g transform = "translate(0, 50)">
 					<g id = "states-vis"/>
+				</g>
+				<g transform = "translate(650, 550)">
+					<rect fill="url(#legend-gradient)"
+					class = "legend"
+					x="10" y="10" width="150" height="25"/>
+					<text class="legend-min"/>
+					<text class="legend-max" transform="translate(150, 0)"/>
 				</g>
 				<g  id = "compare-vis-container" transform = "translate(950, 50)">
 					<g id = "compare-vis"/>
@@ -30,7 +43,7 @@
 					<g id = "favorite-cereal-vis" transform = "translate(0, 50)"/>
 				</g>
 				<g transform = "translate(950, 670)">
-					<text id = "income-title" class = "title">Obesity By Income 2011 - 2015</text>
+					<text id = "income-title" class = "title"/>
 					<g id = "income-vis"/>
 				</g>
 			</g>

@@ -1,4 +1,5 @@
 text {
+	font-family: serif;
 	fill : white;
 	cursor: default;
 	-webkit-user-select: none;  
@@ -10,38 +11,40 @@ text {
 body{
 	background: black;
 }
+
+.point{
+	fill: #0093D1;
+	opacity: 0.8;
+	stroke: white;
+	stroke-width : 0;
+}
+
 .point:hover, .point-hover{
 	stroke-width: 10;
+	fill: white;
 }
-.point{
-	opacity: 0.8;
+.state{
+	fill: #0093D1;
 }
+
 .state:hover, .state-hover{
 	fill-opacity: 0;
-}
-
-.obesity{
-	fill : #0093D1;
 	stroke: #0093D1;
 }
-
-.poverty{
-	fill: #F2635F;
-	stroke: #F2635F;
-}
-
-.cereal{
-	fill:  #cc00ff;
-	stroke: #cc00ff;
-}
-
-
 .stack{
-	opacity: 0.8;
 	stroke-width : 3;
-	stroke: black;	
+	stroke: black;
+	fill: #0093D1;
+	opacity: 0.8;
 }
 
+.legend{
+	stroke: #0093D1;
+}
+.stack-label{
+	stroke: none;
+	fill: white;
+}
 
 .axis text{
 	font-size : 15px;
@@ -76,7 +79,7 @@ body{
 	stroke: white;
 }
 
-.bar .value{
+.bar .value {
 	fill: #0093D1;
 	opacity: 0.8;
 }

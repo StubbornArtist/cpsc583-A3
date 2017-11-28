@@ -15,20 +15,20 @@ var stacked_area = function(){
 		selection.each(function(data){
 			
 			var zValues =  d3.set(data.map(zVal)).values();
-			var xValues = d3.set(data.map(xVal)).values();
-			var yValues = d3.set(data.map(yVal)).values();
-			var numLevels = zValues.length -1;
+			var xExtent = d3.extent(data, xVal);
+			var formatted_data = format_data(data);
+			var yMax = y_max_value(formatted_data, zValues);
 			
 			var svg = d3.select(this)
-			.attr("transform", "translate(0," + (height * numLevels) + ")");
+			.attr("transform", "translate( 0," + (height/2) + ")");
 			
 			x = d3.scaleLinear()
 			.range([0, width])
-			.domain(xValues);
+			.domain(xExtent);
 					
 			y = d3.scaleLinear()
 			.range([height, 0])
-			.domain([0, d3.max(yValues)]);
+			.domain([0, yMax]);
 			
 
 			var stack = d3.stack()
@@ -37,7 +37,7 @@ var stacked_area = function(){
 			.offset(d3.stackOffsetNone);
 			
 			var stacks = svg.selectAll(".stack")
-			.data(stack(format_data(data)));
+			.data(stack(formatted_data));
 			update(stacks);
 			
 			stacks = stacks.enter();
@@ -49,23 +49,25 @@ var stacked_area = function(){
 			if(xaxis.empty()){
 				xaxis = svg.append("g")
 				.attr("class", "x-axis axis");
+				
 				xaxis.append("text")
-				.attr('transform', 'translate(' + (width * 2) + "," + height + ")")
+				.attr('transform', 'translate(' + (width/2)  + ",50)")
 				.text(titles[0]);
 			}
 			var yaxis = svg.select(".y-axis");
 			if(yaxis.empty()){
 				yaxis = svg.append("g")
 				.attr("class", "y-axis axis");
+				
 				yaxis.append("text")
-				.attr('transform', "translate(" + (-1 * height) + "," +  (height * -2) + ") rotate(-90)")
+				.attr('transform', "translate(-50," +  (height/2)  + ") rotate(-90)")
 		.		text(titles[1]);
 			}
 			
 			xaxis.attr('transform', 'translate(0,' + height + ')')
-			.call(d3.axisBottom().scale(x).ticks(xValues.length));
+			.call(d3.axisBottom().scale(x).ticks(xExtent[1] - xExtent[0] + 1));
 			
-			yaxis.call(d3.axisLeft().scale(y).ticks(1));
+			yaxis.call(d3.axisLeft().scale(y).ticks(3));
 			
 		});
 	}
@@ -86,7 +88,16 @@ var stacked_area = function(){
 		return new_data;
 	}
 	
-	
+	function y_max_value(data, zValues){
+		
+		return d3.max(data, function(d){
+			var sum = 0;
+			for(var z in zValues){
+				sum+= +d[zValues[z]];
+			}
+			return sum;
+		});
+	}
 	function update(stacks){
 		
 		var area = d3.area()
@@ -96,13 +107,28 @@ var stacked_area = function(){
 			
 		stacks.select(".area")
 		.attr("d", area);	
+		
+		stacks.select(".stack-label")
+		.attr("transform", 
+		function(d) { 
+		var dat = d[d.length - 1];
+		return "translate(" + width + "," + ((dat[1] + dat[0])/2) + ")";
+		
+		})
+		.text(function(d){ return d.key;});
 	}
 	
 	function init (stacks){
-		stacks.append("g")
-		.attr("class", "stack " + classes)
-		.append("path")
+		var stack = stacks.append("g")
+		.attr("class", "stack " + classes);
+		
+		stack.append("path")
 		.attr("class", "area");
+		
+		stack.append("text")
+		.attr("class", "stack-label");
+				
+		update(stacks);
 	}
 			
 	chart.x = function(value){

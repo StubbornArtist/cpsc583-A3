@@ -1,10 +1,10 @@
 var selections = [ 
-			{"title" : "Obesity (%)", "class" :"obesity", "value" : function(d){return +d.obesity;}},
-			{"title" : "Poverty (%)", "class": "poverty", "value" : function(d){return +d.poverty;}},
-			{"title" :"Cereal Calories", "class" : "cereal", "value" : 
+			{"title" : "Obesity (%)", "value" : function(d){return +d.obesity;}},
+			{"title" : "Poverty (%)", "value" : function(d){return +d.poverty;}},
+			{"title" :"Cereal Calories", "value" : 
 			function(d){return (d.cereal == undefined) ? NaN : +(d.cereal.calories);}}];
 			
-var dispatch = d3.dispatch("axis-change");
+var dispatch = d3.dispatch("axis-change", "state-hover");
 var cereal_stats = {};
 
 
@@ -25,6 +25,7 @@ window.onload = function(){
 		cereal_stats = get_cereal_stats(data);
 
 		init_states_vis(map_data, selections[0]);
+		update_legend_values(selections[0], data);
 		init_comparison_scatter(data, selections[1], selections[0]);
 		create_state_point_mapping();
 		draw_axis_selectors(selections.map(function(d){return d.title;}), 1, 0);
@@ -36,7 +37,14 @@ window.onload = function(){
 			var ySelection = selections.find(function(d){ return d.title == y.options[y.current];});
 	
 			update_states_vis(ySelection);
+			update_legend_values(ySelection, data);
 			update_comparison_scatter(xSelection, ySelection);
+		});
+		
+		dispatch.on("state-hover", function(d){
+			update_state_name(d.state);
+			update_favorite_cereal(d.cereal);
+			update_income_vis(d.income);
 		});
 	});
 }
@@ -104,6 +112,7 @@ function get_map_data(data, map_json){
 
 function create_state_point_mapping(){
 	d3.selectAll(".state").each(function(d){
+		
 		var dat = d.properties.data;
 		if(!(dat == undefined)){
 			var points = d3.selectAll(".point")
@@ -129,29 +138,23 @@ function init_states_vis(data, initVal){
 	d3.select("#states-vis")
 		.datum(data)
 		.call(us_gradient_map()
-		.value(initVal.value)
-		.classes(initVal.class));	
+		.value(initVal.value));	
 		
 	d3.selectAll(".state")
 	.on("mouseover", function(d){
 		var dat = d.properties.data;
 		d.mapping.classed("point-hover", true);
-		update_state_name(dat.state);
-		update_favorite_cereal(dat.cereal);
-		draw_income_vis(dat.income);
+		dispatch.call("state-hover", this, dat);
 		
 	}).on("mouseout", function(d){
-		var dat = d.properties.data;
 		d.mapping.classed("point-hover", false);
-		clear_state_name();
 	});
 }
 
 function update_states_vis(selection){
 	d3.select("#states-vis")
 	.call(us_gradient_map()
-	.value(selection.value)
-	.classes(selection.class));
+	.value(selection.value));
 }
 
 
@@ -161,7 +164,6 @@ function init_comparison_scatter(data, initX, initY){
 		.call(scatter_plot()
 					.x(initX.value)
 					.y(initY.value)
-					.classes(initY.class)
 					.height(500)
 					.width(500)
 					.radius(10));
@@ -169,11 +171,10 @@ function init_comparison_scatter(data, initX, initY){
 		d3.selectAll(".point")
 		.on("mouseover", function(d){
 			d.mapping.classed("state-hover", true);
-			update_state_name(d.state);
+			dispatch.call("state-hover", this, d);
 		})
 		.on("mouseout", function(d){
 			d.mapping.classed("state-hover", false);
-			clear_state_name();
 		});
 }
 
@@ -182,23 +183,23 @@ function update_comparison_scatter(selectionX, selectionY){
 		.call(scatter_plot()
 				.x(selectionX.value)
 				.y(selectionY.value)
-				.classes(selectionY.class)
 				.height(500)
 				.width(500)
 				.radius(10));
 }
 
-function draw_income_vis(data){
-
+function update_income_vis(income_data){
+	d3.select("#income-title")
+		.text("Obesity By Income 2011-2015");
+		
 	d3.select("#income-vis")
-			.datum(data)
+			.datum(income_data)
 			.call(stacked_area()
-			.height(50)
-			.width(100)
+			.height(200)
+			.width(500)
 			.x(function(d){return +d.year; })
 			.y(function(d){return +d.obesity; })
 			.z(function(d){return d.bracket; })
-			.classes("obesity")
 			.titles(["Year", "Obesity (%)"]));
 	
 }
@@ -215,6 +216,18 @@ function update_favorite_cereal(cereal_data){
 			.padding(25));	
 }
 
+function update_state_name(state){
+	d3.select("#state-name").text("State : " + state);	
+}
+
+function update_legend_values(selection, data){
+	var max = d3.max(data, selection.value);
+	var min = d3.min(data, selection.value);
+	
+	d3.select(".legend-min").text(min);
+	d3.select(".legend-max").text(max);
+}
+
 function draw_axis_selectors(options, initX, initY){
 	d3.select("#compare-vis-container")
 	.datum(options)
@@ -228,12 +241,5 @@ function draw_axis_selectors(options, initX, initY){
 	.attr("transform", "translate(250, 550)")
 }
 
-function update_state_name(state){
-	d3.select("#state-name").text("State : " + state);	
-}
-
-function clear_state_name(){
-	update_state_name("");
-}
 
 
